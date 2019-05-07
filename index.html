@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8">
+    <title>Задание 4</title>
+  </head>
+  <body>
+    <h3>Task 04</h3>
+ 
+    <!-- Создаем canvas элемент для использования графики 500 на 500 пикселей-->
+    <canvas id="myCanvas" width="500" height="500"></canvas>
+
+    <script>
+
+        var mouseX = 0;
+        var mouseY = 0; 
+        var clickPositionX = 0;
+        var clickPositionY = 0;
+        var boardClickColorsX = 0;
+        var boardClickColorsY = 0;
+
+        var abcdefgh = ["A", "B", "C", "D", "E", "F", "G", "H"];
+
+        // Массив с цветами клеток шахматного поля
+        const boardColors = [
+            ["white", "black", "white", "black", "white", "black", "white", "black", "white", "black"],
+            ["black", "white", "black", "white", "black", "white", "black", "white", "black", "white"],
+            ["white", "black", "white", "black", "white", "black", "white", "black", "white", "black"],
+            ["black", "white", "black", "white", "black", "white", "black", "white", "black", "white"],
+            ["white", "black", "white", "black", "white", "black", "white", "black", "white", "black"],
+            ["black", "white", "black", "white", "black", "white", "black", "white", "black", "white"],
+            ["white", "black", "white", "black", "white", "black", "white", "black", "white", "black"],
+            ["black", "white", "black", "white", "black", "white", "black", "white", "black", "white"],
+        ];    
+
+        // Вспомогательный массив, для отрисовки ходов
+        var boardClickColors = [[],[],[],[],[],[],[],[]];
+
+        
+        for (i = 0; i < 8; i++) {
+            for (j = 0; j < 8; j++) {
+                boardClickColors [i][j] = boardColors[i][j]; 
+            }
+        }
+
+        // двумерный массив - все возможные ходы конем по x, y
+        var moves = [
+            [-1, -2],
+            [1, -2],
+            [2, -1],
+            [2, 1],
+            [1, 2],
+            [-1, 2],
+            [-2, -1],
+            [-2, 1]
+        ];
+
+        // получаем холст для рисования
+        var canvas = document.getElementById("myCanvas"); 
+        var context = canvas.getContext("2d");
+        context.font = "18px Verdana";
+        context.strokeStyle = "black";
+
+        // рисуем шахматную доску
+        drawBoard(boardColors);
+
+        // выводим обозначения полей
+        for (i = 0; i < 8; i++) {
+            context.fillStyle = "gray";
+            context.fillText((i + 1), 25, 430 - i * 50);
+            context.fillText((i + 1), 465, 430 - i * 50);
+            context.fillText(abcdefgh[i], 70 + i * 50, 35);
+            context.fillText(abcdefgh[i], 70 + i * 50, 475);
+        };
+
+        // щелчок левой кнопки мыши на поле canvas
+        canvas.addEventListener("click", e => {
+            mouseX = e.layerX;
+            mouseY = e.layerY;
+            // сброс ходов и отрисовка доски
+            for (i = 0; i < 8; i++) {
+                for (j = 0; j < 8; j++) {
+                    boardClickColors [i][j] = boardColors[i][j]; 
+                }
+            }
+            drawBoard(boardColors);
+            // если указатель мыши на поле
+            if (mouseX >= 50 && mouseX <= 450 && mouseY >=50 && mouseY <= 450) {
+                // преобразуем координаты указателя мыши в координаты клетки шахматной доски
+                clickPositionX = getArrayPosition(mouseX);
+                clickPositionY = getArrayPosition(mouseY);
+                boardClickColors [clickPositionX][clickPositionY] = "Blue";
+                    // устанавливаем зеленый цвет для допустимых ходов
+                    for (i = 0; i < 8; i++) {
+                        boardClickPositionX = clickPositionX + moves[i][0];
+                        boardClickPositionY = clickPositionY + moves[i][1];
+                        // делаем запись в массив
+                        if (boardClickPositionX >=0 && boardClickPositionX <=7 &&
+                            boardClickPositionY >=0 && boardClickPositionY <=7) {
+                            boardClickColors [boardClickPositionX][boardClickPositionY] = "green";
+                        }
+                    }
+                    
+                // отрисовка поля с учетом всех возможных ходов
+                drawBoard(boardClickColors);
+            }
+        });
+        
+        // определяем координаты поля для массива относительно координат указателя мыши
+        function getArrayPosition(x) {
+            if (x > 49 && x < 100 ) return 0;
+            if (x > 99 && x < 150 ) return 1;
+            if (x > 149 && x < 200 ) return 2;
+            if (x > 199 && x < 250 ) return 3;
+            if (x > 249 && x < 300 ) return 4;
+            if (x > 299 && x < 350 ) return 5;
+            if (x > 349 && x < 400 ) return 6;
+            if (x > 399 && x < 451 ) return 7;
+        }
+        
+        // функция отрисовки шахматной доски
+        function drawBoard(array) {
+            context.strokeStyle = "black";
+            for (i = 0; i < 8; i++) {
+                for (j = 0; j < 8; j++) {
+                    context.fillStyle = array[i][j];
+                    context.fillRect(50 + i * 50, 50 + j * 50, 50, 50);
+
+                }
+            }
+            context.strokeRect(50, 50, 400, 400);
+        } 
+
+    </script>
+  
+  </body>
+</html>
